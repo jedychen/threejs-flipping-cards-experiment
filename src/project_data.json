@@ -1,0 +1,68 @@
+{
+  "projects": [
+    {
+        "position": 0,
+        "name": "Equilibrium",
+        "imageUrl": "equilibrium.jpg",
+        "themeColor": "#ff0",
+        "blocks": [
+            {
+                "horizontalFlip": true,
+                "text": "Equilibrium"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Game"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Installation"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Arduino"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Processing"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Sensor"
+            }
+        ]
+    },
+    {
+        "position": 1,
+        "name": "Vision Poster",
+        "imageUrl": "vision-poster.jpg",
+        "themeColor": "#f0f",
+        "blocks": [
+            {
+                "horizontalFlip": false,
+                "text": "Touch Designer"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Generative"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Vision Poster"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Data Viz"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Art"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Collaboration"
+            }
+        ]
+    }
+  ]
+}
