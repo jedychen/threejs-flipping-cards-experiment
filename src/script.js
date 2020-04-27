@@ -173,7 +173,7 @@ function setupSingleProjectCubes(parent, project, geometry) {
         cube.name = 'cube'
         cube.direction = (Math.random() < 0.5 ? -PI : PI)
         cube.attr = horizontalFlip ? 'y' : 'x'
-
+        addFlipping(cube)
         parent.add(cube)
     }
 }
@@ -205,7 +205,7 @@ function drawTextAsTexture(textArray, color, fontWeight, horizontalFlip) {
     return texture
 }
 
-function flipCube(cube) {
+function addFlipping(cube) {
     cube.flip = null
     cube.flip_back = null
     var duration = 2
@@ -213,23 +213,24 @@ function flipCube(cube) {
 
     var config = {
         ease : Elastic.easeOut,
-        delay : 0,
+        duration: duration,
     }
     config[cube.attr] = cube.direction
 
-    cube.flip = TweenMax.to(
+    var config_reverse = {
+        ease : Elastic.easeOut,
+        duration: duration,
+    }
+    config_reverse[cube.attr] = 0
+
+    cube.flip = gsap.timeline({paused: true});
+
+    cube.flip.to(
         cube.rotation,
         duration,
         config
     )
-
-    var config_reverse = {
-        ease : Elastic.easeOut,
-        delay : delay,
-    }
-    config_reverse[cube.attr] = 0
-
-    cube.flip_back = TweenMax.to(
+    cube.flip.to(
         cube.rotation,
         duration,
         config_reverse
@@ -286,21 +287,20 @@ function render() {
     var intersects = raycaster.intersectObjects( group.children );
 
     if ( intersects.length > 0 ) {
-
         if ( INTERSECTED != intersects[ 0 ].object ) {
             INTERSECTED = intersects[ 0 ].object
             if ( INTERSECTED.name == 'cube' ) {
-                flipCube(INTERSECTED)
+                INTERSECTED.flip.restart()
             }
         }
         else if ( INTERSECTED && INTERSECTED.name == 'cube') {
-            if ( INTERSECTED.flip.progress() >= 1. ) {
-                INTERSECTED.flip_back.progress(0).pause()
+            if ( INTERSECTED.flip.progress() >= 0.5 ) {
+                INTERSECTED.flip.progress(0.5)
             }
         }
 
     } else {
-        INTERSECTED = null
+        // INTERSECTED = null
     }
 
     renderer.render(scene, camera)
