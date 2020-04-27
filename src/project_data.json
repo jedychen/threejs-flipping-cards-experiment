@@ -2,65 +2,195 @@
   "projects": [
     {
         "position": 0,
-        "name": "Equilibrium",
+        "url": "/equilibrium",
         "imageUrl": "equilibrium.jpg",
-        "themeColor": "#ff0",
+        "themeColor": "#8b8f9a",
         "blocks": [
             {
                 "horizontalFlip": true,
-                "text": "Equilibrium"
+                "text": "Equilibrium",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Game"
+                "text": "Game",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": false,
-                "text": "Installation"
+                "text": "2014",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Arduino"
+                "text": "Arduino",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": false,
-                "text": "Processing"
+                "text": "Processing",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Sensor"
+                "text": "Sensor",
+                "weight": "normal"
             }
         ]
     },
     {
         "position": 1,
-        "name": "Vision Poster",
+        "url": "/vision-poster",
         "imageUrl": "vision-poster.jpg",
-        "themeColor": "#f0f",
+        "themeColor": "#ba3a72",
+        "titleIndex": 2,
         "blocks": [
             {
                 "horizontalFlip": false,
-                "text": "Touch Designer"
+                "text": "Touch,Designer",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Generative"
+                "text": "Generative,Design",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Vision Poster"
+                "text": "Vision,Poster",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": false,
-                "text": "Data Viz"
+                "text": "Data,Visualization",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Art"
+                "text": "2019",
+                "weight": "normal"
             },
             {
                 "horizontalFlip": false,
-                "text": "Collaboration"
+                "text": "Art",
+                "weight": "normal"
+            }
+        ]
+    },
+    {
+        "position": 2,
+        "url": "/academy",
+        "imageUrl": "academy.jpg",
+        "themeColor": "#c7c7c7",
+        "titleIndex": 1,
+        "blocks": [
+            {
+                "horizontalFlip": false,
+                "text": "IBM Waston,AI",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "R/GA,Academy",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "2017",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Data,Visualization",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Visual,Expression",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Personality,Analysor",
+                "weight": "normal"
+            }
+        ]
+    },
+    {
+        "position": 3,
+        "url": "/hu",
+        "imageUrl": "hu.jpg",
+        "themeColor": "#ee6f40",
+        "titleIndex": 2,
+        "blocks": [
+            {
+                "horizontalFlip": false,
+                "text": "Installation",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "P5.js",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "hu:,The,Spectrum,of Being",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Generative,Design",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "2016",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Photography",
+                "weight": "normal"
+            }
+        ]
+    },
+    {
+        "position": 4,
+        "url": "/sketch",
+        "imageUrl": "sketch.jpg",
+        "themeColor": "#9b9046",
+        "titleIndex": 2,
+        "blocks": [
+            {
+                "horizontalFlip": false,
+                "text": "2014",
+                "weight": "lighter"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Sketch",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Procreate",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "Digital",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": true,
+                "text": "Sherlock,Homes",
+                "weight": "normal"
+            },
+            {
+                "horizontalFlip": false,
+                "text": "TV,Show",
+                "weight": "normal"
             }
         ]
     }
