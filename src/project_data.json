@@ -8,7 +8,7 @@
         "blocks": [
             {
                 "horizontalFlip": true,
-                "text": "Equilibrium",
+                "text": "EQUILIBRIUM",
                 "weight": "normal"
             },
             {
@@ -57,7 +57,7 @@
             },
             {
                 "horizontalFlip": true,
-                "text": "Vision,Poster",
+                "text": "VISION,POSTER",
                 "weight": "normal"
             },
             {
@@ -86,12 +86,12 @@
         "blocks": [
             {
                 "horizontalFlip": false,
-                "text": "IBM Waston,AI",
+                "text": "IBM,Waston",
                 "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "R/GA,Academy",
+                "text": "R/GA,ACADEMY",
                 "weight": "normal"
             },
             {
@@ -101,17 +101,17 @@
             },
             {
                 "horizontalFlip": false,
-                "text": "Data,Visualization",
+                "text": "Visualize,Personality",
                 "weight": "normal"
             },
             {
                 "horizontalFlip": true,
-                "text": "Visual,Expression",
+                "text": "Data,Expression",
                 "weight": "normal"
             },
             {
                 "horizontalFlip": false,
-                "text": "Personality,Analysor",
+                "text": "AI,Analysor",
                 "weight": "normal"
             }
         ]
@@ -135,7 +135,7 @@
             },
             {
                 "horizontalFlip": true,
-                "text": "hu:,The,Spectrum,of Being",
+                "text": "HU:,THE,SPECTRUM,OF BEING",
                 "weight": "normal"
             },
             {
@@ -169,7 +169,7 @@
             },
             {
                 "horizontalFlip": true,
-                "text": "Sketch",
+                "text": "DIGITAL,SKETCH",
                 "weight": "normal"
             },
             {
@@ -179,7 +179,7 @@
             },
             {
                 "horizontalFlip": false,
-                "text": "Digital",
+                "text": "Painting",
                 "weight": "normal"
             },
             {
