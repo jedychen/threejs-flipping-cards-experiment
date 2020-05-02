@@ -2,6 +2,7 @@
  * Jedy Chen
  */
 
+
 /* https://threejs.org/examples/js/Detector.js */
 var Detector={canvas:!!window.CanvasRenderingContext2D,webgl:function(){try{var e=document.createElement("canvas");return!!window.WebGLRenderingContext&&(e.getContext("webgl")||e.getContext("experimental-webgl"))}catch(t){return false}}(),workers:!!window.Worker,fileapi:window.File&&window.FileReader&&window.FileList&&window.Blob,getWebGLErrorMessage:function(){var e=document.createElement("div");e.id="webgl-error-message";e.style.fontFamily="monospace";e.style.fontSize="13px";e.style.fontWeight="normal";e.style.textAlign="center";e.style.background="#fff";e.style.color="#000";e.style.padding="1.5em";e.style.width="400px";e.style.margin="5em auto 0";if(!this.webgl){e.innerHTML=window.WebGLRenderingContext?['Your graphics card does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">WebGL</a>.<br />','Find out how to get it <a href="http://get.webgl.org/" style="color:#000">here</a>.'].join("\n"):['Your browser does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">WebGL</a>.<br/>','Find out how to get it <a href="http://get.webgl.org/" style="color:#000">here</a>.'].join("\n")}return e},addGetWebGLMessage:function(e){var t,n,r;e=e||{};t=e.parent!==undefined?e.parent:document.body;n=e.id!==undefined?e.id:"oldie";r=Detector.getWebGLErrorMessage();r.id=n;t.appendChild(r)}};
 var script=document.createElement('script');
@@ -15,6 +16,7 @@ var projectData
 var CUBE_SIZE, GRID, TOTAL_CUBES, WALL_SIZE, HALF_WALL_SIZE
 var MAIN_COLOR, SECONDARY_COLOR, BACKGROUND_COLOR
 var cubes, renderer, camera, scene, group, stats
+var imageLoader, coverMaterials, loadManager, loader
 /* - Ray Caster Selection- */
 var raycaster, mouse, INTERSECTED
 
@@ -26,6 +28,7 @@ function init() {
     _width = window.innerWidth
     _height = window.innerHeight
     PI = Math.PI
+    // imageLoader = new AjaxTextureLoader
 
     CUBE_SIZE = 100 /* width, height */
     SCROLL_SPEED = 10.0
@@ -60,7 +63,43 @@ function init() {
     loadJSON(function(response) {
       // Parse JSON string into object
         projectData = JSON.parse(response)
+        loadCoverImages()
+     });
+    
+    window.addEventListener('scroll', updateCamera)
+    window.addEventListener('mousemove', onMouseMove, false )
+    window.addEventListener('resize', resizeHandler, false)
+    window.addEventListener('click', onMouseClick, false)
+}
 
+function loadCoverImages() {
+    //https://threejsfundamentals.org/threejs/lessons/threejs-textures.html#easy
+    loadManager = new THREE.LoadingManager();
+    loader = new THREE.TextureLoader(loadManager);
+    coverMaterials = []
+
+    var imageOffsets = [
+        {x: 0., y: 0.5 },
+        {x: 0.333, y: 0.5 },
+        {x: 0.666, y: 0.5},
+        {x: 0., y: 0. },
+        {x: 0.333, y: 0. },
+        {x: 0.666, y: 0. },
+    ]
+
+    for (var i=0; i < projectData.projects.length; i++) {
+        for (var j=0; j<6; j++) {
+            var coverImage = loader.load( projectData.projects[i].imageUrl );
+            coverImage.repeat.set( 0.333, 0.5 );
+            coverImage.offset.set( imageOffsets[j].x, imageOffsets[j].y );
+            coverImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            var coverMaterial = new THREE.MeshStandardMaterial({map: coverImage})
+            coverMaterial.transparent = true
+            coverMaterials.push(coverMaterial)
+        }
+    }
+     
+    loadManager.onLoad = () => {
         setupCamera(0, CAMERA_START, 640)
         setupCubes(group, projectData) // Rotating cards
         setupLights(group)
@@ -68,11 +107,7 @@ function init() {
         group.rotation.set(0, 0, 0)
         scene.add(group)
         setupRenderer(document.body)
-     });
-    
-    window.addEventListener('scroll', updateCamera)
-    window.addEventListener('mousemove', onMouseMove, false )
-    window.addEventListener('resize', resizeHandler, false)
+    };
 }
 
 function animate() {
@@ -96,12 +131,6 @@ function loadJSON(callback) {
     xobj.send(null);  
 }
 
-function AjaxTextureLoader() {
-    const cache = THREE.Cache;
-    // Turn on shared caching for FileLoader, ImageLoader and TextureLoader
-    cache.enabled = true;
-}
-
 /* -- CAMERA -- */
 function setupCamera(x, y, z) {
     camera.position.set(x, y, z)
@@ -111,34 +140,27 @@ function setupCamera(x, y, z) {
 function setupCubes(parent, projectData) {
     var geometry = new THREE.BoxBufferGeometry(CUBE_SIZE, CUBE_SIZE, 0.03)
     for (var i=0; i < projectData.projects.length; i++) {
-        setupSingleProjectCubes(parent, projectData.projects[i], geometry)
+        setupSingleProjectCubes(parent, projectData.projects[i], geometry, i)
     }
 }
 
-function setupSingleProjectCubes(parent, project, geometry) {
+function setupSingleProjectCubes(parent, project, geometry, projectIndex) {
     var rowMaxProjects = 3
     var rowMaxCubes = 3
+    var colMaxCubes = 2
     var projectPosition = project.position
     var half_wall = (GRID * CUBE_SIZE) / 2
-    var xOrigin =  (projectPosition % rowMaxProjects) * CUBE_SIZE * 3 - half_wall + (CUBE_SIZE/2)
-    var yOrigin =  - Math.floor(projectPosition/rowMaxProjects) * CUBE_SIZE * 2 + (CUBE_SIZE) * 4
-    var imageOffsets = [
-        {x: 0., y: 0.5 },
-        {x: 0.333, y: 0.5 },
-        {x: 0.666, y: 0.5},
-        {x: 0., y: 0. },
-        {x: 0.333, y: 0. },
-        {x: 0.666, y: 0. },
-    ]
+    var xOrigin =  (projectPosition % rowMaxProjects) * CUBE_SIZE * rowMaxCubes - half_wall + (CUBE_SIZE/2)
+    var yOrigin =  - Math.floor(projectPosition/rowMaxProjects) * CUBE_SIZE * colMaxCubes + (CUBE_SIZE) * 4
+    
 
     for (i = 0; i < 6; i++) {
-        var coverImage = new THREE.TextureLoader().load( project.imageUrl );
-        coverImage.repeat.set( 0.333, 0.5 );
-        coverImage.offset.set( imageOffsets[i].x, imageOffsets[i].y );
-        coverImage.anisotropy = renderer.getMaxAnisotropy();
-
         var horizontalFlip = Math.random() >= 0.5;
-
+        var index = i + projectIndex*6
+        var xStart = (projectPosition % rowMaxProjects) * rowMaxCubes
+        var yStart = Math.floor(projectPosition/rowMaxProjects) * colMaxCubes
+        var transitionPosX = xStart + i % rowMaxCubes
+        var transitionPosY = yStart + Math.floor(i/rowMaxCubes)
         var cubeMaterial = [
             new THREE.MeshStandardMaterial({
                 color: MAIN_COLOR //left
@@ -152,13 +174,12 @@ function setupSingleProjectCubes(parent, project, geometry) {
             new THREE.MeshStandardMaterial({
                 color: MAIN_COLOR // bottom
             }),
-            new THREE.MeshStandardMaterial({
-                map: coverImage  // front
-            }),
+            coverMaterials[index],
             new THREE.MeshStandardMaterial({
                 // color: MAIN_COLOR // back
                 map: drawTextAsTexture(
                     project.blocks[i].text.split(','),
+                    //transitionPosX.toString()+transitionPosY.toString(),
                     project.themeColor,
                     project.blocks[i].weight,
                     horizontalFlip) //back
@@ -171,6 +192,11 @@ function setupSingleProjectCubes(parent, project, geometry) {
 
         cube.position.set(x, y, 0)
         cube.name = 'cube'
+        cube.transitionPos = {
+            x: transitionPosX, 
+            y: transitionPosY
+        }
+        
         cube.direction = (Math.random() < 0.5 ? -PI : PI)
         cube.attr = horizontalFlip ? 'y' : 'x'
         addFlipping(cube)
@@ -180,10 +206,11 @@ function setupSingleProjectCubes(parent, project, geometry) {
 
 function drawTextAsTexture(textArray, color, fontWeight, horizontalFlip) {
     var canvas = document.createElement("canvas");
-    canvas.width = 128;
-    canvas.height = 128;
+    var magnitude = 2.0
+    canvas.width = 128 * magnitude;
+    canvas.height = 128 * magnitude;
     var context = canvas.getContext("2d");
-    context.font = fontWeight + " 16pt Helvetica"
+    context.font = fontWeight + " 26pt Helvetica"
     context.textAlign = "left";
     context.fillStyle = color;
     var flip = 1;
@@ -191,25 +218,23 @@ function drawTextAsTexture(textArray, color, fontWeight, horizontalFlip) {
         context.rotate(PI);
         flip = -1;
     }
-    var x = flip * canvas.width / 2 - 55;
-    var y = flip * canvas.height / 2 - 35;
-    context.fillRect(0,0,flip * 128,flip * 128);
+    var x = flip * canvas.width / 2 - 55 * magnitude;
+    var y = flip * canvas.height / 2 - 35 * magnitude;
+    context.fillRect(0,0,flip * canvas.width,flip * canvas.height);
     context.fillStyle = "black";
     for (var i=0; i<textArray.length; i++) {
         context.fillText(textArray[i], x, y);
-        y += 25;
+        y += 25 * magnitude;
     }
     var texture = new THREE.Texture( canvas );
+    texture.minFilter = THREE.LinearFilter;
     texture.needsUpdate = true;
 
     return texture
 }
 
 function addFlipping(cube) {
-    cube.flip = null
-    cube.flip_back = null
     var duration = 2
-    var delay = duration
 
     var config = {
         ease : Elastic.easeOut,
@@ -224,7 +249,6 @@ function addFlipping(cube) {
     config_reverse[cube.attr] = 0
 
     cube.flip = gsap.timeline({paused: true});
-
     cube.flip.to(
         cube.rotation,
         duration,
@@ -267,6 +291,76 @@ function onMouseMove( event ) {
     event.preventDefault()
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+}
+
+function onMouseClick(event) {
+    event.preventDefault()
+    // update the picking ray with the camera and mouse position
+    raycaster.setFromCamera( mouse, camera )
+    // calculate objects intersecting the picking ray
+    var intersects = raycaster.intersectObjects( group.children );
+
+    if ( intersects.length > 0 && intersects[ 0 ].object.name == 'cube' ) {
+        cubesTransition(intersects[ 0 ].object)
+    }
+}
+
+function cubesTransition(cube) {
+    for (var i=0; i<group.children.length; i++) {
+        if (group.children[i].name == 'cube') {
+            var config_ripple = {
+                ease : Elastic.easeOut,
+                duration: 2,
+                z: 100
+            }
+
+            var config_flip = {
+                ease : Power4.easeOut,
+                duration: 0.5,
+            }
+
+            var config_fade = {
+                ease : Power4.easeOut,
+                duration: 1,
+                opacity: 0.
+            }
+
+            config_ripple['delay'] = calcDelay(group.children[i].transitionPos, cube.transitionPos)
+            config_fade['delay'] = config_ripple['delay'] + config_ripple['duration'] - 1
+            config_flip[group.children[i].attr] = 0
+
+
+            gsap.to(
+                group.children[i].position,
+                config_ripple
+            )
+
+            group.children[i].flip.pause()
+
+            gsap.to(
+                group.children[i].rotation,
+                config_flip
+            )
+
+            gsap.to(
+                group.children[i].material[4],
+                config_fade
+            )
+
+            gsap.to(
+                group.children[i].material[5],
+                config_fade
+            )
+        }
+    }
+}
+
+function calcDelay(targetPos, originPos) {
+    var delayGap = 0.2;
+    var a = targetPos.x - originPos.x
+    var b = targetPos.y - originPos.y
+    var distance =  Math.sqrt( a*a + b*b );
+    return distance*delayGap
 }
 
 function updateCamera() {
