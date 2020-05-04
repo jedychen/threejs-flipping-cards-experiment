@@ -23,14 +23,14 @@ const _breakpoints = {
     lg: 1904
 }
 const _cameraDistance = {
-    xs: 485,
+    xs: 420,
     sm: 660,
-    md: 690,
-    lg: 700
+    md: 750,
+    lg: 455
 }
 /* - Project Configurations - */
 var projectsConfig
-var CARD_SIZE, WALL_SIZE, OFFSET_TOP, CARD_CREATED, AUTO_FLIP
+var CARD_SIZE, WALL_SIZE, OFFSET_TOP, CARD_CREATED, AUTO_FLIP, PIXEL_RATIO
 var PROJ_NUM, PROJ_COL_NUM, CARD_COL_NUM, CARD_ROW_NUM
 var LIGHT_COLOR, BACKGROUND_COLOR
 /* - Interaction Configurations - */
@@ -55,9 +55,19 @@ function init() {
     _width = window.innerWidth
     _height = window.innerHeight
 
+    // Check based on device info
+    if (mobileCheck() === true) {
+        AUTO_FLIP = true // True only on mobile and tablet
+        if (!tabletCheck()) PIXEL_RATIO = window.devicePixelRatio
+        else PIXEL_RATIO = 1
+        console.log("mobile device")
+    } else {
+        PIXEL_RATIO = 1
+        AUTO_FLIP = false
+    }
+
     CARD_SIZE = 100 // Card's width, height
     CARD_CREATED = false
-    AUTO_FLIP = false // True only on mobile and tablet
     OFFSET_TOP = 60 // Move the group upwards
     SCROLL_SPEED = 10.0 // Mouse scrolling spped
     WALL_SIZE = (9 * CARD_SIZE) // Standard size for setting up positions of light and other major elements. 
@@ -103,7 +113,7 @@ function animate() {
 
 /* - Main Rendering Function - */
 function render() {
-    if (AUTO_FLIP) {
+    if (AUTO_FLIP === true) {
         renderer.render(scene, camera)
         return
     }
@@ -181,44 +191,30 @@ function setupResponsive(resize=false) {
     renderer.setSize(_width, _height)
     CARD_COL_NUM = 3
     CARD_ROW_NUM = 2
+    
+    console.log(_width, PIXEL_RATIO)
     // Check based on screen size
     switch (true) {
-        case (_width < _breakpoints.xs):
+        case (_width < _breakpoints.xs * PIXEL_RATIO):
             PROJ_COL_NUM = 1
-            CAMERA_Z = _cameraDistance.xs * _breakpoints.xs / _width
+            CAMERA_Z = _cameraDistance.xs * _breakpoints.xs * PIXEL_RATIO / _width
             console.log("xs")
             break;
-        case (_width < _breakpoints.sm):
+        case (_width < _breakpoints.sm * PIXEL_RATIO):
             PROJ_COL_NUM = 2
-            CAMERA_Z = _cameraDistance.sm * _breakpoints.sm / _width
+            CAMERA_Z = _cameraDistance.sm * _breakpoints.sm * PIXEL_RATIO / _width
             console.log("sm")
             break;
-        case (_width < _breakpoints.md):
-            PROJ_COL_NUM = 3
-            CAMERA_Z = _cameraDistance.md * _breakpoints.md / _width
+        case (_width < _breakpoints.md * PIXEL_RATIO):
+            PROJ_COL_NUM = 2
+            CAMERA_Z = _cameraDistance.md * _breakpoints.md * PIXEL_RATIO / _width
             console.log("md")
             break;
         default:
             PROJ_COL_NUM = 3
-            CAMERA_Z = _cameraDistance.md * _breakpoints.md / _width
+            CAMERA_Z = _cameraDistance.lg * _breakpoints.lg * PIXEL_RATIO / _width
             console.log("default")
             break;
-    }
-    // Check based on device info
-    if (mobileCheck() === true) {
-        AUTO_FLIP = true
-        if (tabletCheck() == true) {
-            console.log("tablet")
-            PROJ_COL_NUM = 2
-            CAMERA_Z = _cameraDistance.md * _breakpoints.md / _width
-        } else {
-            PROJ_COL_NUM = 1
-            CAMERA_Z = _cameraDistance.sm * _breakpoints.sm / _width
-            console.log("mobile")
-        }
-    } else {
-        AUTO_FLIP = false
-        console.log("desktop")
     }
     // Move the camera to the top of project cards
     CAMERA_Y = Math.floor(PROJ_NUM / PROJ_COL_NUM / 2) * CARD_ROW_NUM * CARD_SIZE
@@ -399,9 +395,11 @@ function _addCardFlipAnimation(card) {
     const duration = 2 // 2 seconds
     var delay = 0
     var pause = true
+    var repeat = 0
     if (AUTO_FLIP) {
-        delay = randomInRange(0, 20)
+        delay = randomInRange(0, 40)
         pause = false
+        repeat = -1
     }
     var config_flip = {
         ease : Elastic.easeOut,
@@ -417,7 +415,8 @@ function _addCardFlipAnimation(card) {
     config_reverse[card.rotateAxis] = 0
 
     card.flip = gsap.timeline({
-        paused: pause
+        paused: pause,
+        repeat: repeat
     }).to(
         card.rotation,
         config_flip
@@ -565,5 +564,5 @@ function tabletCheck() {
 };
 
 function randomInRange(min, max) {
-    return Math.floor(Math.random() * (max- min + 1)) + min;
+    return Math.random() * (max- min + 1) + min;
 }
