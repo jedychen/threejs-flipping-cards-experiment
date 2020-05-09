@@ -23,10 +23,9 @@ const _breakpoints = {
     lg: 1904
 }
 const _cameraDistance = {
-    xs: 420,
-    sm: 660,
-    md: 750,
-    lg: 455
+    single: 360,
+    double: 720,
+    triple: 1090
 }
 /* - Project Configurations - */
 var projectsConfig
@@ -60,7 +59,6 @@ function init() {
         AUTO_FLIP = true // True only on mobile and tablet
         if (!tabletCheck()) PIXEL_RATIO = window.devicePixelRatio
         else PIXEL_RATIO = 1
-        console.log("mobile device")
     } else {
         PIXEL_RATIO = 1
         AUTO_FLIP = false
@@ -193,33 +191,36 @@ function setupResponsive(resize=false) {
     CARD_ROW_NUM = 2
     
     console.log(_width, PIXEL_RATIO)
+    aspectRatio = _width / _height
+    
     // Check based on screen size
     switch (true) {
         case (_width < _breakpoints.xs * PIXEL_RATIO):
             PROJ_COL_NUM = 1
-            CAMERA_Z = _cameraDistance.xs * _breakpoints.xs * PIXEL_RATIO / _width
+            CAMERA_Z = _cameraDistance.single / aspectRatio
             console.log("xs")
             break;
         case (_width < _breakpoints.sm * PIXEL_RATIO):
             PROJ_COL_NUM = 2
-            CAMERA_Z = _cameraDistance.sm * _breakpoints.sm * PIXEL_RATIO / _width
+            CAMERA_Z = _cameraDistance.double / aspectRatio
             console.log("sm")
             break;
         case (_width < _breakpoints.md * PIXEL_RATIO):
             PROJ_COL_NUM = 2
-            CAMERA_Z = _cameraDistance.md * _breakpoints.md * PIXEL_RATIO / _width
+            CAMERA_Z = _cameraDistance.double / aspectRatio
             console.log("md")
             break;
         default:
             PROJ_COL_NUM = 3
-            CAMERA_Z = _cameraDistance.lg * _breakpoints.lg * PIXEL_RATIO / _width
+            CAMERA_Z = _cameraDistance.triple / aspectRatio
             console.log("default")
             break;
     }
+    console.log(CAMERA_Z)
     // Move the camera to the top of project cards
     CAMERA_Y = Math.floor(PROJ_NUM / PROJ_COL_NUM / 2) * CARD_ROW_NUM * CARD_SIZE
     setupCamera(0, CAMERA_Y, CAMERA_Z)
-    camera.aspect = _width / _height
+    camera.aspect = aspectRatio
     camera.updateProjectionMatrix()
 
     if (!CARD_CREATED)
