@@ -162,8 +162,11 @@ function loadCoverImages() {
         for (var j=0; j<6; j++) {
             var coverImage = imageLoader.load( projectsConfig.projects[i].imageUrl );
             coverImage.repeat.set( 0.333, 0.5 );
+            //coverImage.generateMipmaps = false;
+            //coverImage.minFilter = THREE.LinearFilter;
+            //coverImage.magFilter = THREE.LinearFilter;
             coverImage.offset.set( imageOffsets[j].x, imageOffsets[j].y );
-            coverImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            //coverImage.anisotropy = renderer.getMaxAnisotropy();
             coverImages.push(coverImage)
         }
     }
@@ -249,6 +252,7 @@ function setupLights(parent) {
 /* -- Set up ThreeJS render -- */
 //  parent: object3D Object group.
 function setupRenderer(parent) {
+    renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setClearColor(BACKGROUND_COLOR, 1.0)
     parent.appendChild(renderer.domElement)
 }
@@ -258,7 +262,7 @@ function setupRenderer(parent) {
 //  projectConfig: json Project configuration file. 
 function setupProjectCards(parent, projectsConfig) {
     var geometry = new THREE.BoxBufferGeometry(CARD_SIZE, CARD_SIZE, 0.03)
-    const blankMaterial = new THREE.MeshStandardMaterial({color: 0xFFFFFF})
+    const blankMaterial = new THREE.MeshBasicMaterial({color: 0xFFFFFF})
     for (var i=0; i < PROJ_NUM; i++) {
         _setupCardsSingleProject(parent, projectsConfig.projects[i], blankMaterial, geometry)
     }
@@ -280,7 +284,7 @@ function _setupCardsSingleProject(parent, projectConfig, material, geometry) {
             material, //right
             material, // top
             material, // bottom
-            new THREE.MeshStandardMaterial({ // front
+            new THREE.MeshBasicMaterial({ // front
                 map: coverImages[index],
                 transparent: true
             }),
@@ -384,7 +388,10 @@ function _drawTextAsTexture(textArray, color, fontWeight, horizontalFlip) {
     }
 
     var texture = new THREE.Texture( canvas );
-    texture.minFilter = THREE.LinearFilter;
+    //texture.generateMipmaps = false;
+    //texture.minFilter = THREE.LinearFilter;
+    //texture.magFilter = THREE.LinearFilter;
+    //texture.minFilter = THREE.LinearFilter;
     texture.needsUpdate = true;
 
     return texture
